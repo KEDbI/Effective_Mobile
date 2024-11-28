@@ -16,7 +16,7 @@ class SqliteDatabase:
                                     'author TEXT NOT NULL,'
                                     'year INTEGER NOT NULL,'
                                     'status TEXT NOT NULL DEFAULT "в наличии")')
-        except:
+        except sqlite3.Error:
             print('При работе с базой данных произошла ошибка, попробуйте позже.')
 
     def add_book(self, title: str, author: str, year: int) -> None:
@@ -67,30 +67,30 @@ class SqliteDatabase:
             params['year'] = year
         columns = [i for i in params.keys()]
         values = tuple([i for i in params.values()])
-        #try:
+        try:
             # Подключение к бд
-        with sqlite3.connect(self.db_name) as conn:
-            # Т.к. мы не знаем, какое количество параметров будет передано в функцию, запрос к бд формируем
-            # динамически, в зависимости от параметров
-            query = (f'SELECT * FROM {self.table_name} '
-                     f'WHERE ')
-            for i in columns:
-                if i != 'year':
-                    query += i + f' LIKE ?' + ' AND '
+            with sqlite3.connect(self.db_name) as conn:
+                # Т.к. мы не знаем, какое количество параметров будет передано в функцию, запрос к бд формируем
+                # динамически, в зависимости от параметров
+                query = (f'SELECT * FROM {self.table_name} '
+                         f'WHERE ')
+                for i in columns:
+                    if i != 'year':
+                        query += i + f' LIKE ?' + ' AND '
+                    else:
+                        query += i + '=? AND '
+                query = query.rstrip(' AND ')
+                cursor = conn.cursor()
+                # Получение результатов поиска и вывод их пользователю
+                cursor.execute(query, values)
+                res = tuple([book for book in cursor.fetchall()])
+                if res:
+                    for book in res:
+                        print(f'id: {book[0]}, title: {book[1]}, author: {book[2]}, year: {book[3]}, status: {book[4]}')
                 else:
-                    query += i + '=? AND '
-            query = query.rstrip(' AND ')
-            cursor = conn.cursor()
-            # Получение результатов поиска и вывод их пользователю
-            cursor.execute(query, values)
-            res = tuple([book for book in cursor.fetchall()])
-            if res:
-                for book in res:
-                    print(f'id: {book[0]}, title: {book[1]}, author: {book[2]}, year: {book[3]}, status: {book[4]}')
-            else:
-                print('По заданным критериям книг не найдено.')
-        #except sqlite3.Error:
-            #print('При работе с базой данных произошла ошибка, попробуйте позже.')
+                    print('По заданным критериям книг не найдено.')
+        except sqlite3.Error:
+            print('При работе с базой данных произошла ошибка, попробуйте позже.')
 
 
     def get_all_books(self) -> None:
