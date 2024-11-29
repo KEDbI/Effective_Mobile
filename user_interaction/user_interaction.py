@@ -21,7 +21,7 @@ def start() -> Library | SqliteDatabase | None:
             db.create_file()
             return db
         elif db == '2' or db.lower() == 'sqlite':
-            db = SqliteDatabase('library')
+            db = SqliteDatabase('library.db')
             db.create_table()
             return db
         elif db == '3' or db.lower() == 'exit':

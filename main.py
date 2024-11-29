@@ -2,7 +2,8 @@ from user_interaction.user_interaction import start, get_operation, add, delete,
 
 
 def main() -> None:
-    # вызов функции start() и присваивание выбранной пользователем бд переменной db
+    # вызов функции start() и присваивание выбранной пользователем бд переменной db. Если пользователь введет '3' или
+    # 'exit', функция вернет None
     while True:
         db = start()
         if db:
