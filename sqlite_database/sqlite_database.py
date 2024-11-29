@@ -58,10 +58,10 @@ class SqliteDatabase:
         так и по их комбинации"""
         params = {}
         # проверка введенных данных, добавление их в словарь params
+        # символ % здесь нужен для поиска с конструкцией LIKE
         if title:
             params['title'] = title + '%'
         if author:
-            # символ % здесь нужен для поиска с конструкцией LIKE
             params['author'] = author + '%'
         if year:
             params['year'] = year
